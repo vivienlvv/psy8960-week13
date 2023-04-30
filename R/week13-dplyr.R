@@ -58,7 +58,8 @@ week13_tbl %>% group_by(performance_group) %>%
 ## How to define "top managerS"m test scores?
 
 week13_tbl %>% group_by(city) %>%
-  summarize(city, employee_id, test_score) %>% 
-  slice_max(test_score, n =3) %>% 
-  arrange(city, desc(test_score))
+  summarise(city, employee_id, test_score,
+            ranking = dense_rank(desc(test_score))) %>% 
+  filter(ranking <= 3) %>% 
+  arrange(city, desc(test_score)) 
   
