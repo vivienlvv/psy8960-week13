@@ -53,6 +53,8 @@ week13_tbl %>% filter(manager_hire == "N") %>%
   group_by(city) %>%
   summarize(num_manager = n())
 
+# count(city, by default roughly resemble group_by -> summarize()
+
 
 # 4. Compute the average and standard deviation of number of years of employment split by performance level (bottom, middle, and top).
 week13_tbl %>% group_by(performance_group) %>% 
@@ -68,6 +70,8 @@ week13_tbl %>% group_by(city) %>%
   # Only keep the top 3 managers within each city 
   filter(ranking <= 3) %>% 
   # Selecting required information for output
-  select(city, employee_id, test_score)
+  select(city, employee_id, test_score) %>% # need to divide test_score 
+  print(n = 100)
+  
   
   
