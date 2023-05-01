@@ -60,6 +60,6 @@ week13_tbl %>% group_by(performance_group) %>%
 week13_tbl %>% group_by(city) %>%
   summarise(city, employee_id, test_score,
             ranking = dense_rank(desc(test_score))) %>% 
-  filter(ranking <= 3) %>% 
-  arrange(city, desc(test_score)) 
+  arrange(city, desc(test_score)) %>% 
+  filter(ranking <= 3)
   
