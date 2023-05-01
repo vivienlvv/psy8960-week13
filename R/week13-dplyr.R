@@ -1,11 +1,15 @@
 # Script Settings and Resources
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 library(tidyverse)
-library(keyring)
-library(RMariaDB)
+# library(keyring)
+# library(RMariaDB)
 
 
 # Data Import and Cleaning
+
+## Code was commented out to avoid running the script again and making
+## unnecessary connections
+## because I've already saved data table as week13.csv
 
 ## Setting key
 # key_set_with_value(service = "latis-mysql",
@@ -31,9 +35,10 @@ library(RMariaDB)
 ## Reading in created dataset 
 week13_tbl = read_csv("../data/week13.csv", show_col_types = FALSE)
 
-# Analysis
 
-## Weird- I am assuming all entries are managers? NEED TO DOUBLE CHECK 1,2
+
+
+# Analysis
 
 # 1. Display the total number of managers.
 week13_tbl %>% nrow()
@@ -46,20 +51,23 @@ week13_tbl %>% select(employee_id) %>%
 # 3. Display a summary of the number of managers split by location, but only include those who were not originally hired as managers.
 week13_tbl %>% filter(manager_hire == "N") %>% 
   group_by(city) %>%
-  summarize(n = n())
+  summarize(num_manager = n())
 
 
-# 4. Display the average and standard deviation of number of years of employment split by performance level (bottom, middle, and top).
+# 4. Compute the average and standard deviation of number of years of employment split by performance level (bottom, middle, and top).
 week13_tbl %>% group_by(performance_group) %>% 
   summarize(avg_yr_employment = mean(yrs_employed),
             sd_yr_employment = sd(yrs_employed))
 
-# 5. Display the location and ID numbers of the top 3 managers from each location, in alphabetical order by location and then descending order of test score. If there are ties, include everyone reaching rank 3.
-## How to define "top managerS"m test scores?
-
+# 5. Show the location and ID numbers of the top 3 managers from each location, in alphabetical order by location and then descending order of test score. If there are ties, include everyone reaching rank 3.
 week13_tbl %>% group_by(city) %>%
-  summarise(city, employee_id, test_score,
-            ranking = dense_rank(desc(test_score))) %>% 
+  # dense rank was used to avoid skipped ranks when there are observations with the same test score
+  mutate(ranking = dense_rank(desc(test_score))) %>% 
+  # Choosing required information
   arrange(city, desc(test_score)) %>% 
-  filter(ranking <= 3)
+  # Only keep the top 3 managers within each city 
+  filter(ranking <= 3) %>% 
+  # Selecting required information for output
+  select(city, employee_id, test_score)
+  
   
